@@ -17,6 +17,18 @@
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="./ferromail-signup.png" alt="Sign Up" width="48%" />
+  <img src="./ferromail-signin.png" alt="Sign In" width="48%" />
+</p>
+<p align="center">
+  <img src="./ferromail-dashboard.png" alt="Dashboard" width="97%" />
+</p>
+
+---
+
 Ferromail is a high-performance, self-hosted email platform designed as a modern, lightweight, and fast alternative to Plunk. It features a high-throughput backend workspace written in Rust and a premium, responsive dashboard frontend built in Next.js 15.
 
 
