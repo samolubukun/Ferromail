@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120" width="500" height="120">
+  <defs>
+    <!-- Brand Gradient -->
+    <linearGradient id="ferroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  
+  <!-- Icon Group (Matching frontend's Logo.tsx exactly, scaled to 100x100) -->
+  <g transform="translate(10, 10) scale(0.5)" filter="url(#shadow)">
+    <!-- Background card -->
+    <rect width="200" height="200" rx="40" fill="#0A0F1D"/>
+    
+    <!-- Brand accent indicator lines -->
+    <rect x="20" y="80" width="60" height="10" rx="5" fill="#6366f1"/>
+    <rect x="30" y="100" width="50" height="10" rx="5" fill="#4f46e5"/>
+    <rect x="25" y="120" width="55" height="10" rx="5" fill="#818cf8"/>
+    
+    <!-- Main envelope -->
+    <path
+      d="M70 70 L170 70 L170 140 L70 140 Z M70 70 L120 115 L170 70"
+      fill="#141E33"
+      stroke="#F8FAFC"
+      stroke-width="10"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+    />
+    
+    <!-- Outbound sending arrow -->
+    <path d="M120 70 L120 50 L110 60 L130 60 L120 50 Z" fill="#F8FAFC"/>
+  </g>
+
+  <!-- Text Group -->
+  <text x="130" y="72" font-family="'Outfit', 'Inter', 'Segoe UI', sans-serif" font-size="44" font-weight="800" fill="#f1f5f9" letter-spacing="-0.03em">
+    Ferro<tspan fill="url(#ferroGrad)">Mail</tspan>
+  </text>
+  <text x="132" y="92" font-family="'Inter', 'Segoe UI', sans-serif" font-size="14" font-weight="500" fill="#94a3b8" letter-spacing="0.1em">
+    SECURE • SELF-HOSTED • TRANSACTIONAL
+  </text>
+</svg>
