@@ -1,0 +1,147 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # Infrastructure Services
+  # ============================================
+
+  db:
+    image: postgres:16-alpine
+    container_name: ferromail-db
+    restart: unless-stopped
+    ports:
+      - "55432:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis
+    container_name: ferromail-redis
+    restart: unless-stopped
+    ports:
+      - "56379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: ferromail-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: plunk
+      MINIO_ROOT_PASSWORD: plunkminiopass
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ============================================
+  # Ferromail Application Services
+  # ============================================
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: api
+    container_name: ferromail-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+      - JWT_SECRET=ferromail_jwt_signing_secret_key
+      - API_URI=http://localhost:3000
+      - SMTP_DOMAIN=localhost
+      - PORT=3000
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: worker
+    container_name: ferromail-worker
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+      - JWT_SECRET=ferromail_jwt_signing_secret_key
+      - API_URI=http://api:3000
+      - SMTP_DOMAIN=localhost
+      - SMTP_RELAY_HOST=${SMTP_RELAY_HOST:-}
+      - SMTP_RELAY_PORT=${SMTP_RELAY_PORT:-}
+      - SMTP_RELAY_USERNAME=${SMTP_RELAY_USERNAME:-}
+      - SMTP_RELAY_PASSWORD=${SMTP_RELAY_PASSWORD:-}
+      - SMTP_RELAY_SECURE=${SMTP_RELAY_SECURE:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+  smtp:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: smtp
+    container_name: ferromail-smtp
+    restart: unless-stopped
+    ports:
+      - "465:465"
+      - "587:587"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+      - API_URI=http://api:3000
+      - SMTP_DOMAIN=localhost
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ferromail-frontend
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3000
+      - PORT=4000
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
