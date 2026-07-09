@@ -17,15 +17,8 @@
 
 ---
 
-## Screenshots
-
-<p align="center">
-  <img src="./ferromail-signup.png" alt="Sign Up" width="48%" />
-  <img src="./ferromail-signin.png" alt="Sign In" width="48%" />
-</p>
-<p align="center">
-  <img src="./ferromail-dashboard.png" alt="Dashboard" width="97%" />
-</p>
+> [!WARNING]
+> **Development Notice:** FerroMail is currently a work-in-progress and is incomplete. Some features and modules may be partially functional or non-functional. The codebase will be revisited for further active development in the future.
 
 ---
 
@@ -71,6 +64,18 @@ graph TD
     - **Simulation Mode**: If neither is configured, the worker operates in simulation mode, automatically updating the database records to `DELIVERED` with mock IDs.
 4.  **Tracking & Events**:
     Every email delivery attempt updates the database state (`status`, `sentAt`, `deliveredAt`, `error`) and generates event logs in the `events` table (e.g. `email.delivered` or `email.failed`), updating the real-time analytics dashboard.
+
+---
+
+## Screenshots
+
+<p align="center">
+  <img src="./ferromail-signup.png" alt="Sign Up" width="48%" />
+  <img src="./ferromail-signin.png" alt="Sign In" width="48%" />
+</p>
+<p align="center">
+  <img src="./ferromail-dashboard.png" alt="Dashboard" width="97%" />
+</p>
 
 ---
 
